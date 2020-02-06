@@ -1,12 +1,15 @@
-class Department {
-    private employees: string[] = [];
+abstract class Department {
+    static fiscalYear = 2020;
+    protected employees: string[] = [];
 
-    constructor(private readonly id: number, public name: string) {
+    constructor(protected readonly id: number, public name: string) {
     }
 
-    describe(this: Department) {
-        console.log(`Depatment ${this.id} - ${this.name}`);
+    static createEmployee(name: string) {
+        return { name }
     }
+
+    abstract describe(this: Department): void;
 
     addEmployee(employee: string) {
         this.employees.push(employee);
@@ -18,14 +21,91 @@ class Department {
     }
 }
 
-const rnd = new Department(1, 'R&D');
+class ITDepartment extends Department {
+    constructor(id: number, public admins: string[]) {
+        super(id, 'IT');
+    }
 
-rnd.addEmployee('Max');
-rnd.addEmployee('Zolaa');
+    describe() {
+        console.log('IT Department');
+    }
+}
 
-rnd.describe();
-rnd.printEmployeeInfo();
+class AccountingDepartment extends Department {
+    private lastReport: string;
+    private static instance: AccountingDepartment;
 
-// const rndCopy = { name: 's', describe: rnd.describe }
+    get mostRecentReport() {
+        if(this.lastReport) {
+            return this.lastReport;
+        }
+        throw new Error('No report found.');
+    }
 
-// rndCopy.describe();
+    set mostRecentReport(value: string) {
+        if (!value) {
+            throw new Error('Please provide a valid value');
+        }
+
+        this.addReport(value);
+    }
+
+    private constructor(id: number, private reports: string[]) {
+        super(id, 'Accounting');
+        this.lastReport = reports[0];
+    }
+
+    static getInstance() {
+        if (AccountingDepartment.instance) {
+            return AccountingDepartment.instance;
+        }
+
+        AccountingDepartment.instance = new AccountingDepartment(2, [])
+        
+        return AccountingDepartment.instance;
+    }
+
+    describe() {
+        console.log('Accounting Department');
+    }
+
+    addEmployee(name: string) {
+        if (name === 'Max') {
+            return;
+        }
+
+        this.employees.push(name);
+    }
+
+    addReport(text: string) {
+        this.reports.push(text);
+        this.lastReport = text;
+    }
+
+    printReports() {
+        console.log(this.reports)
+    }
+}
+
+const employee1 = Department.createEmployee('Yonas')
+console.log(employee1, Department.fiscalYear);
+
+const it = new ITDepartment(1, ['Max']);
+
+it.addEmployee('Max');
+it.addEmployee('Zolaa');
+
+it.describe();
+it.printEmployeeInfo();
+
+const accounting = AccountingDepartment.getInstance();
+
+accounting.mostRecentReport = 'Report';
+accounting.addReport('Everything good');
+console.log(accounting.mostRecentReport);
+
+accounting.addEmployee('Max');
+accounting.addEmployee('Ann');
+
+accounting.printReports();
+accounting.printEmployeeInfo();
