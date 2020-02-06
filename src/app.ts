@@ -1,19 +1,31 @@
-const button = document.querySelector('button');
-let appId = '1';
+class Department {
+    private employees: string[] = [];
 
-function add(n1: number, n2: number) {
-    if (n1 + n2 > 0) {
-        return n1 + n2;
+    constructor(private readonly id: number, public name: string) {
     }
 
-    return;
+    describe(this: Department) {
+        console.log(`Depatment ${this.id} - ${this.name}`);
+    }
+
+    addEmployee(employee: string) {
+        this.employees.push(employee);
+    }
+
+    printEmployeeInfo() {
+        console.log(this.employees.length)
+        console.log(this.employees)
+    }
 }
 
-function clickHandler(message: string) {
-    // let userName = 'Max';
-    console.log('Clicked!' + message);
-}
+const rnd = new Department(1, 'R&D');
 
-if (button) {
-    button.addEventListener('click', clickHandler.bind(null, 'YO'));
-}
+rnd.addEmployee('Max');
+rnd.addEmployee('Zolaa');
+
+rnd.describe();
+rnd.printEmployeeInfo();
+
+// const rndCopy = { name: 's', describe: rnd.describe }
+
+// rndCopy.describe();
