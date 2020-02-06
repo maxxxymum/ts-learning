@@ -1,111 +1,31 @@
-abstract class Department {
-    static fiscalYear = 2020;
-    protected employees: string[] = [];
+// type AddFn = (a: number, b: number) => number;
+interface AddFn {
+    (a: number, b: number): number;
+}
 
-    constructor(protected readonly id: number, public name: string) {
-    }
+let add: AddFn;
 
-    static createEmployee(name: string) {
-        return { name }
-    }
+add = (n1: number, n2: number) => (n1 + n2);
 
-    abstract describe(this: Department): void;
+interface Named {
+    readonly name?: string;
+    otuputName?: string;
+}
 
-    addEmployee(employee: string) {
-        this.employees.push(employee);
-    }
+interface Greetable extends Named {
+    greet(phrase: string): void
+}
 
-    printEmployeeInfo() {
-        console.log(this.employees.length)
-        console.log(this.employees)
+class Person implements Greetable {
+    constructor(public name?: string) {}
+
+    greet() {
+        console.log('Hi!' + ' ' + this.name)
     }
 }
 
-class ITDepartment extends Department {
-    constructor(id: number, public admins: string[]) {
-        super(id, 'IT');
-    }
+let user1: Greetable
 
-    describe() {
-        console.log('IT Department');
-    }
-}
+user1 = new Person( );
 
-class AccountingDepartment extends Department {
-    private lastReport: string;
-    private static instance: AccountingDepartment;
-
-    get mostRecentReport() {
-        if(this.lastReport) {
-            return this.lastReport;
-        }
-        throw new Error('No report found.');
-    }
-
-    set mostRecentReport(value: string) {
-        if (!value) {
-            throw new Error('Please provide a valid value');
-        }
-
-        this.addReport(value);
-    }
-
-    private constructor(id: number, private reports: string[]) {
-        super(id, 'Accounting');
-        this.lastReport = reports[0];
-    }
-
-    static getInstance() {
-        if (AccountingDepartment.instance) {
-            return AccountingDepartment.instance;
-        }
-
-        AccountingDepartment.instance = new AccountingDepartment(2, [])
-        
-        return AccountingDepartment.instance;
-    }
-
-    describe() {
-        console.log('Accounting Department');
-    }
-
-    addEmployee(name: string) {
-        if (name === 'Max') {
-            return;
-        }
-
-        this.employees.push(name);
-    }
-
-    addReport(text: string) {
-        this.reports.push(text);
-        this.lastReport = text;
-    }
-
-    printReports() {
-        console.log(this.reports)
-    }
-}
-
-const employee1 = Department.createEmployee('Yonas')
-console.log(employee1, Department.fiscalYear);
-
-const it = new ITDepartment(1, ['Max']);
-
-it.addEmployee('Max');
-it.addEmployee('Zolaa');
-
-it.describe();
-it.printEmployeeInfo();
-
-const accounting = AccountingDepartment.getInstance();
-
-accounting.mostRecentReport = 'Report';
-accounting.addReport('Everything good');
-console.log(accounting.mostRecentReport);
-
-accounting.addEmployee('Max');
-accounting.addEmployee('Ann');
-
-accounting.printReports();
-accounting.printEmployeeInfo();
+user1.greet('Hi there!');
