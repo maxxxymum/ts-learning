@@ -1,147 +1,76 @@
-type Admin = {
-    name: string;
-    privileges: string[];
-};
+// const names: Array<string> = [];
 
-type Employee = {
-    name: string;
-    startDate: Date;
-};
+// const promise: Promise<number> = new Promise((resolve, reject) => {
+//     setTimeout(() => {
+//         resolve(10);
+//     }, 2000);
+// });
 
-type ElevateEmployee = Admin & Employee;
+// promise.then(data => {
+//     // data.split(' ');
+// })
 
-const e1: ElevateEmployee = {
-    name: 'Max',
-    privileges: ['read', 'write'],
-    startDate: new Date(),
+function merge<T extends object, U extends object>(objA: T, objB: U) {
+    return {...objA, ...objB};
 }
 
-type Combinable = string | number;
-type Numeric = number | boolean;
+const mergedObj = merge({name: 'Max'}, {age: 30});
+console.log(mergedObj.name);
 
-type Universal = Combinable & Numeric;
-
-function add(a: number, b: number): number;
-function add(a: string, b: string): string;
-function add(a: number, b: string): string;
-function add(a: string, b: number): string;
-function add(a: Combinable, b: Combinable) {
-    if (typeof a === 'string' || typeof b === 'string') {
-        return a.toString() + b.toString();
-    }
-
-    return a + b;
+interface Lengthy {
+    length: number;
 }
 
-const result = add('Max', ' Martyn');
-result.split(' ');
+function countAndDescribe<T extends Lengthy>(element: T): [T, string] {
+    let descriptionText = 'Got no value.';
 
-const fetchedUserData = {
-    id: 'u1',
-    name: 'Max',
-    job: {
-        title: 'CEO',
-        description: 'My own company'
-    }
-};
-
-console.log(fetchedUserData?.job?.title);
-
-const userInput = 'null';
-const storedData = userInput ?? 'DEFAULT';
-console.log(storedData);
-
-type UnknownEmployee = Employee | Admin;
-
-function printEmployee(emp: UnknownEmployee) {
-    console.log('Name: ' + emp.name);
-    
-    if ('privileges' in emp) {
-        console.log('Privileges: ' + emp.privileges)
+    if (element.length === 1) {
+        descriptionText = 'Got 1 elements.';
+    } else if (element.length > 1) {
+        descriptionText = 'Got ' + element.length + ' elements';
     }
 
-    if ('startDate' in emp) {
-        console.log('Start Date: ' + emp.startDate);
+    return [element, descriptionText];
+}
+
+console.log(countAndDescribe(['Sports', 'Cooking']));
+
+function extractAndConvert<T extends object, U extends keyof T>(obj: T, key: U) {
+    return obj[key];
+}
+
+extractAndConvert({name: 'Max'}, 'name');
+
+class DataStorage<T extends string | number | boolean> {
+    private data: T[] = [];
+
+    addItem(item: T) {
+        this.data.push(item);
+    }
+
+    removeItem(item: T) {
+        if (this.data.indexOf(item) === -1) {
+            return;
+        }
+        this.data.splice(this.data.indexOf(item), 1);
+    }
+
+    getItems() {
+        return [...this.data];
     }
 }
 
-printEmployee(e1);
+const textStorage = new DataStorage<string>();
+textStorage.addItem('Max');
+textStorage.addItem('Bou');
+textStorage.removeItem('Max');
+console.log(textStorage.getItems());
 
-class Car {
-    drive() {
-        console.log('Driving...');
-    }
-}
+const numberStorage = new DataStorage<number>();
 
-class Truck {
-    drive() {
-        console.log('Driving a car...');
-    }
-
-    loadCargo(amount: number) {
-        console.log('Loading truck ...' + amount);
-    }
-}
-
-type Vechile = Car | Truck;
-
-const v1 = new Car();
-const v2  = new Truck();
-
-function useVechile(vechile: Vechile) {
-    vechile.drive();
-
-    if(vechile instanceof Truck) {
-        vechile.loadCargo(100);
-    }
-}
-
-useVechile(v1);
-useVechile(v2);
-
-interface Bird {
-    type: 'bird';
-    flyingSpeed: number;
-}
-
-interface Horse {
-    type: 'horse'
-    runningSpeed: number;
-}
-
-type Animal = Bird | Horse;
-
-function moveAnimal(animal: Animal) {
-let speed;
-
-    switch (animal.type) {
-        case 'bird':
-            speed = animal.flyingSpeed;
-            break;
-        case 'horse':
-            speed = animal.runningSpeed;
-            break;
-        default:
-            break;
-    }
-
-    console.log('Moving at speed ' + speed);
-}
-
-moveAnimal({type: 'bird', flyingSpeed: 10});
-
-// const usernameInput = <HTMLInputElement>document.getElementById('username')!;
-const usernameInput = document.getElementById('username');
-
-if (usernameInput) {
-    (usernameInput as HTMLInputElement).value = 'Hi there!';
-}
-
-interface ErrorContainer { // { email: 'Not a valid email', username: 'Must start with a character!' }
-    [prop: string]: string
-}
-
-const errorBag: ErrorContainer = {
-    email: 'Not a valid email',
-    username: 'Not valid username'
-}
+// const objectStorage = new DataStorage<object>();
+// const max = {name: 'Max'};
+// objectStorage.addItem(max);
+// objectStorage.addItem({name: 'Bou'});
+// objectStorage.removeItem(max);
+// console.log(objectStorage.getItems());
