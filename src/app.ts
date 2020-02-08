@@ -124,3 +124,84 @@ const p = new Printer();
 const btn = document.querySelector('button')!;
 
 btn.addEventListener('click', p.showMessage);
+
+interface ValidatorConfig {
+    [prop: string]: {
+        [validatableProp: string]: string[]
+    }
+}
+
+const validator: ValidatorConfig = {};
+
+function Required(target: any, propertyName: string) {
+    validator[target.constructor.name] = {
+        ...validator[target.constructor.name],
+        [propertyName]: ['required']
+    }
+}
+
+function PositiveNumber(target: any, propertyName: string) {
+    validator[target.constructor.name] = {
+        ...validator[target.constructor.name],
+        [propertyName]: ['positive']
+    }
+}
+
+function validate(obj: any) {
+    const objValidator = validator[obj.constructor.name];
+
+    if (!objValidator) {
+        return true;
+    }
+
+    let isValid = true;
+
+    for (const prop in objValidator) {
+        console.log(prop);
+
+        for(const validator of objValidator[prop]) {
+            switch (validator) {
+                case 'required': {
+                    isValid = isValid && !!obj[prop];
+                    break;
+                }
+                case 'positive':
+                    isValid = isValid && obj[prop] > 0;
+                    break;
+            }
+        }
+    }
+
+    return isValid;
+}
+
+class Course {
+    @Required
+    title: string;
+    @PositiveNumber
+    price: number;
+
+    constructor(t: string, p: number) {
+        this.title = t;
+        this.price = p;
+    }
+}
+
+const courseForm = document.querySelector('form')!;
+courseForm.addEventListener('submit', event => {
+    event.preventDefault();
+    const titleEl = document.getElementById('title') as HTMLInputElement;
+    const priceEl = document.getElementById('price') as HTMLInputElement;
+   
+    const title = titleEl.value;
+    const price = +priceEl.value;
+
+    const createdCourse = new Course(title, price);
+
+    if (!validate(createdCourse)) {
+        throw new Error('Course is not valid!');
+        return;
+    }
+
+    console.log(createdCourse);
+});
