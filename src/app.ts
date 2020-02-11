@@ -1,3 +1,39 @@
+// Validation
+interface Validatable {
+    value: string | number;
+    required: boolean;
+    minLength?: number;
+    maxLength?: number;
+    min?: number;
+    max?: number;
+}
+
+function validate(input: Validatable) {
+    let isValid = true;
+
+    if (input.required) {
+        isValid = isValid && input.value.toString().trim().length !== 0;
+    }
+
+    if (input.minLength != null && typeof input.value === 'string') {
+        isValid = isValid && input.value.length > input.minLength;
+    }
+
+    if (input.maxLength != null && typeof input.value === 'string') {
+        isValid = isValid && input.value.length < input.maxLength;
+    }
+
+    if (input.min != null && typeof input.value === 'number') {
+        isValid = isValid && input.value >= input.min;
+    }
+
+    if (input.max != null && typeof input.value === 'number') {
+        isValid = isValid && input.value <= input.max;
+    }
+
+    return isValid;
+}
+
 // autobind decorator
 function autobind(
     target: any, 
@@ -42,16 +78,37 @@ class ProjectInput {
         this.attach();
     }
 
+    private validteUserInfo(title: string, description: string, people: number) {
+        const titleValidatable: Validatable = {
+            value: title,
+            required: true,
+            minLength: 5,
+        }
+        const descriptionValidatable: Validatable = {
+            value: description,
+            required: true,
+            minLength: 20
+        }
+        const peopleValidatable: Validatable = {
+            value: people,
+            required: true,
+            min: 5,
+            max: 10,
+        }
+        
+        return (
+            validate(titleValidatable) &&
+            validate(descriptionValidatable) &&
+            validate(peopleValidatable)
+        );
+    }
+
     private gatherUserInfo(): [string, string, number] | void {
         const title = this.titleInput.value;
         const description = this.descriptionInput.value;
         const people = this.peopleInput.value;
 
-        if (
-            title.trim().length === 0 || 
-            description.trim().length === 0 || 
-            people.trim().length === 0
-        ) {
+        if (!this.validteUserInfo(title, description, +people)) {
             alert('Invalid input, please try again!');
             return;
         } else {
