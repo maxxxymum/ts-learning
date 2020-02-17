@@ -1,5 +1,5 @@
-import { Component } from './base-component.js';
-import { Validatable, validate } from '../util/validation.js';
+import Component from './base-component.js';
+import * as Validation from '../util/validation.js';
 import { autobind } from '../decorators/autobind.js'
 import { state } from '../state/project-state.js';
 
@@ -25,17 +25,17 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     renderContent() {}
 
     private validteUserInfo(title: string, description: string, people: number) {
-        const titleValidatable: Validatable = {
+        const titleValidatable: Validation.Validatable = {
             value: title,
             required: true,
             minLength: 5,
         }
-        const descriptionValidatable: Validatable = {
+        const descriptionValidatable: Validation.Validatable = {
             value: description,
             required: true,
             minLength: 20
         }
-        const peopleValidatable: Validatable = {
+        const peopleValidatable: Validation.Validatable = {
             value: people,
             required: true,
             min: 1,
@@ -43,9 +43,9 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
         }
         
         return (
-            validate(titleValidatable) &&
-            validate(descriptionValidatable) &&
-            validate(peopleValidatable)
+            Validation.validate(titleValidatable) &&
+            Validation.validate(descriptionValidatable) &&
+            Validation.validate(peopleValidatable)
         );
     }
 
