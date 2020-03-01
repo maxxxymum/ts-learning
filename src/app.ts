@@ -23,6 +23,15 @@ function searchAddressHandler(event: Event) {
         }
 
         const coordinates = response.data.results[0].geometry.location;
+        const map = new google.maps.Map(document.getElementById('map')!, {
+            center: coordinates,
+            zoom: 16
+          });
+
+          new google.maps.Marker({
+            position: coordinates,
+            map: map
+          });
     }).catch(error => {
         console.error(error);
     });
