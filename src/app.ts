@@ -1,6 +1,10 @@
-    import { ProjectInput } from './components/project-input';
-    import { ProjectList } from './components/project-list';
-    
-    new ProjectInput(); 
-    new ProjectList('active');
-    new ProjectList('finished');
+const form = document.querySelector('form')! as HTMLFormElement;
+const addressInput = document.getElementById('address')! as HTMLInputElement;
+
+function searchAddressHandler(event: Event) {
+    event.preventDefault();
+
+    const enteredAddress = addressInput.value;
+}
+
+form.addEventListener('submit', searchAddressHandler);
